@@ -7,6 +7,7 @@ import {
 import { convasitionDB } from './indexdb'
 
 export type ILocalSettings = {
+  baseUrl: string
   apiKey: string
   model: string
   temperature: number

@@ -2,6 +2,7 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI, ChatMessage } from 'chatgpt'
 import debugLibrary from 'debug'
 import proxy from 'https-proxy-agent'
 import { isNil } from 'lodash-es'
+import fetch from 'node-fetch'
 
 import { ISSEQuery } from '../controller/message.mjs'
 
@@ -22,15 +23,16 @@ export async function responseChatgpt(
     msg,
     ownerId,
     parentMessageId,
-    conversationId,
     model,
+    baseUrl,
     apiKey,
     temperature,
     top_p
   } = query
   if (!chatgptApiMap.get(ownerId)) {
-    const api = new ChatGPTAPI({
-      apiBaseUrl: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com',
+    const chatOption = {
+      apiBaseUrl:
+        baseUrl || process.env.OPENAI_API_BASE_URL || 'https://api.openai.com',
       apiKey: apiKey || process.env.OPENAI_API_KEY,
       completionParams: {
         model: model || 'gpt-3.5-turbo',
@@ -51,7 +53,10 @@ export async function responseChatgpt(
             return fetch(url, mergedOptions)
           }
         : undefined
-    })
+    }
+    debug('...chatOption: %o', chatOption)
+    // @ts-ignore
+    const api = new ChatGPTAPI(chatOption)
     chatgptApiMap.set(ownerId, api)
   }
   const api = chatgptApiMap.get(ownerId)

@@ -8,9 +8,9 @@ import debugLibrary from 'debug'
 import http from 'http'
 import path from 'path'
 
-import app from '../app.mjs'
 import '../utils/abortControllerPolyfill.mjs'
 import '../utils/fetchPolyfill.mjs'
+import app from '../app.mjs'
 
 const debug = debugLibrary('server')
 

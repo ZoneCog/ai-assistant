@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import * as dotenv from 'dotenv'
 import { defineConfig } from '@umijs/max'
 import path from 'path'
+import { codeInspectorPlugin } from 'code-inspector-plugin'
 
 import { autoImportPlugin } from './auto-import'
 
@@ -39,6 +40,11 @@ export default defineConfig({
     // console.log('memo', memo)
     memo.optimization.minimize(false)
     memo.plugin('unplugin-auto-import').use(autoImportPlugin())
+    memo.plugin('code-inspector-plugin').use(
+      codeInspectorPlugin({
+        bundler: 'webpack'
+      })
+    )
     return memo
   },
   routes: [

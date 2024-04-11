@@ -23,7 +23,8 @@ export default function SettingModal(props: SettingModalProps) {
   }
 
   const formRef = useRef<FormInstance<ILocalSettings>>(null)
-  const initData = {
+  const initData: ILocalSettings = {
+    baseUrl: '',
     apiKey: '',
     model: 'gpt-3.5-turbo',
     temperature: 0.8,
@@ -34,6 +35,13 @@ export default function SettingModal(props: SettingModalProps) {
     {
       required: false,
       message: '不填值时使用系统默认key'
+    }
+  ]
+
+  const baseUrlRule = [
+    {
+      required: false,
+      message: '不填值时使用系统默认baseUrl'
     }
   ]
 
@@ -92,6 +100,9 @@ export default function SettingModal(props: SettingModalProps) {
           onFinish={submit}
           onFinishFailed={submitError}
         >
+          <Form.Item label='baseUrl' name='baseUrl' rules={baseUrlRule}>
+            <Input placeholder='不填值时使用系统默认baseUrl' />
+          </Form.Item>
           <Form.Item label='apiKey' name='apiKey' rules={apiKeyRule}>
             <Input placeholder='不填值时使用系统默认key' />
           </Form.Item>

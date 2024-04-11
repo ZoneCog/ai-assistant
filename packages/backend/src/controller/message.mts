@@ -14,6 +14,7 @@ export interface ISSEQuery {
   parentMessageId?: string
   conversationId?: string
   model?: string
+  baseUrl?: string
   apiKey?: string
   temperature?: string
   top_p?: string
