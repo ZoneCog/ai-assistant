@@ -18,7 +18,11 @@
     "prettier:check": "prettier '**/*.{ts,tsx,mts,mjs,less,js}' --check",
     "prettier:write": "prettier '**/*.{ts,tsx,mts,mjs,less,js}' --write",
     "rm:lib": "rm -rf ./node_modules && rm -rf ./packages/frontend/node_modules && rm -rf ./packages/backend/node_modules",
-    "pkg": "ts-node scripts/pkg.ts"
+    "pkg": "ts-node scripts/pkg.ts",
+    "dealSRT": "node scripts/deal-srt.cjs /Users/zyb/my/ai-assistant/scripts/test.srt /Users/zyb/my/ai-assistant/scripts/test-out.srt",
+    "dealSRT2": "node scripts/deal-srt.cjs /Users/zyb/vedios/talk-llm.srt /Users/zyb/vedios/talk-llm-modify.srt",
+    "dealMerge": "node scripts/deal-srt-merge.cjs /Users/zyb/my/ai-assistant/scripts/test.srt /Users/zyb/my/ai-assistant/scripts/test-en.srt /Users/zyb/my/ai-assistant/scripts/test-merge-out.srt",
+    "dealMerge2": "node scripts/deal-srt-merge.cjs /Users/zyb/vedios/talk-llm-modify.srt /Users/zyb/vedios/talk-llm-en.srt /Users/zyb/vedios/talk-llm-merge.srt"
   },
   "dependencies": {
     "chalk": "^5.2.0",

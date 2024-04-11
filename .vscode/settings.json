@@ -8,12 +8,12 @@
   "scss.validate": false,
   "[less]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": true
+      "source.fixAll.stylelint": "explicit"
     }
   },
   "[css]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": true
+      "source.fixAll.stylelint": "explicit"
     }
   },
   "stylelint.validate": ["css", "scss", "sass", "less", "stylus"],
