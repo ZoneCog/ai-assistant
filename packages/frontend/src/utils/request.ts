@@ -1,7 +1,7 @@
 import { request } from '@umijs/max'
 import { v4 as uuid } from 'uuid'
 
-type IMethod = 'POST' | 'GET'
+type IMethod = 'POST' | 'GET' | 'DELETE'
 
 async function http<ResponseData, RequestData>(
   url: string,
@@ -44,4 +44,10 @@ function post<ResponseData, RequestData = undefined>(
   return http<ResponseData, RequestData>(url, 'POST', data, config)
 }
 
-export { get, post }
+function del<ResponseData, RequestData = undefined>(
+  url: string
+): Promise<Common.Response<ResponseData>> {
+  return http<ResponseData, RequestData>(url, 'DELETE')
+}
+
+export { get, post, del }

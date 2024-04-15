@@ -5,7 +5,6 @@ import clsx from 'clsx'
 import {
   Dispatch,
   SetStateAction,
-  StrictMode,
   createContext,
   useEffect,
   useState
@@ -14,6 +13,7 @@ import {
 import Chatgpt from './Chatgpt'
 import LayoutSider from './LayoutSider'
 import styles from './layoutIndex.less'
+import SettingModal from './components/SettingModal'
 
 interface IChatContext {
   result: IConvasition[]
@@ -33,6 +33,8 @@ interface IChatContext {
     sessionId: string
   ) => void
   getActiveResult: () => IConvasition | undefined
+  setOpenSetting: (open: boolean) => void
+  setModeType: (type: 'createModel' | 'editModel') => void
 }
 
 const getOrder = (res: IConvasition[], index: number): number => {
@@ -53,7 +55,9 @@ const ChatContext = createContext<IChatContext>({
   toggleActive: () => {},
   getConvasitionBySessionId: () => undefined,
   setResultBySessionId: () => {},
-  getActiveResult: () => undefined
+  getActiveResult: () => undefined,
+  setOpenSetting: () => {},
+  setModeType: () => {}
 })
 
 function useGetActive(result: IConvasition[]) {
@@ -73,6 +77,10 @@ function useGetActive(result: IConvasition[]) {
 function LayoutIndex() {
   const [result, setResult] = useState<IConvasition[]>([])
   const active = useGetActive(result)
+  const [openSetting, setOpenSetting] = useState(false)
+  const [modeType, setModeType] = useState(
+    'createModel' as 'createModel' | 'editModel'
+  )
 
   const latestResultRef = useLatest(result)
 
@@ -98,7 +106,8 @@ function LayoutIndex() {
         data: [],
         parentMessageId: '',
         isLoading: false,
-        isInput: false
+        isInput: false,
+        modelId: ''
       }
       setResult([defaultData])
     }
@@ -171,7 +180,8 @@ function LayoutIndex() {
       data: [],
       parentMessageId: '',
       isLoading: false,
-      isInput: false
+      isInput: false,
+      modelId: ''
     }
     newResult.forEach((item) => {
       item.active = false
@@ -201,7 +211,8 @@ function LayoutIndex() {
         data: [],
         parentMessageId: '',
         isLoading: false,
-        isInput: false
+        isInput: false,
+        modelId: ''
       }
       setResult([defaultData])
     }
@@ -241,7 +252,9 @@ function LayoutIndex() {
           toggleActive,
           getConvasitionBySessionId,
           setResultBySessionId,
-          getActiveResult
+          getActiveResult,
+          setOpenSetting,
+          setModeType
         }}
       >
         <div
@@ -262,6 +275,12 @@ function LayoutIndex() {
             <Chatgpt />
           </div>
         </div>
+        <SettingModal
+          type={modeType}
+          open={openSetting}
+          setOpen={setOpenSetting}
+          setType={setModeType}
+        ></SettingModal>
       </ChatContext.Provider>
     </>
   )

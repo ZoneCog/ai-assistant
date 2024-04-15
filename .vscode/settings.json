@@ -16,7 +16,8 @@
       "source.fixAll.stylelint": "explicit"
     }
   },
-  "stylelint.validate": ["css", "scss", "sass", "less", "stylus"],
   "unocss.root": "packages/frontend",
-  "stylelint.packageManager": "pnpm"
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

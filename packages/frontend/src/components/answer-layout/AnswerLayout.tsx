@@ -56,9 +56,7 @@ export default function AnswerLayout(props: AnswerLayoutProps) {
   function generateContent(obj: Answer.answer, index: number) {
     if (obj.type === 'answer') {
       const settings = getSettingData()
-      const enable_markdown =
-        (settings as ILocalSettings)?.enable_markdown ?? true
-      console.log('enable_markdown:', enable_markdown)
+      const enable_markdown = true
 
       function copyCode(e: SyntheticEvent) {
         copyToClipboard(

@@ -6,6 +6,7 @@ module.exports = {
   rules: {
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn'
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'react/no-unknown-property': 'off'
   }
 }

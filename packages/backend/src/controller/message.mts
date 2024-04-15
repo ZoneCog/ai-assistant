@@ -1,6 +1,7 @@
 import debugLibrary from 'debug'
 import { EventEmitter } from 'events'
 import Koa from 'koa'
+import { deleleStore } from '../utils/store.mjs'
 
 import { flowResponse } from '../service/stream.mjs'
 
@@ -18,6 +19,7 @@ export interface ISSEQuery {
   apiKey?: string
   temperature?: string
   top_p?: string
+  sessionId: string
 }
 
 export default class MessageController {
@@ -27,8 +29,27 @@ export default class MessageController {
    */
   public static async sendMsgSSE(ctx: Koa.Context) {
     const query = ctx.request.query as unknown as ISSEQuery
-    debug('sendMsgSSE params', JSON.stringify(ctx.request.query))
+    debug('sendMsgSSE query params:', JSON.stringify(ctx.request.query))
 
     flowResponse(query, ctx, events)
+  }
+
+  public static async delStore(ctx: Koa.Context) {
+    const id = ctx.params.id
+    debug('delStore id:', id)
+    if (!id) {
+      ctx.body = {
+        code: 500,
+        msg: 'id不能为空',
+        data: null
+      }
+      return
+    }
+    deleleStore(id)
+    ctx.body = {
+      code: 200,
+      msg: 'ok',
+      data: null
+    }
   }
 }

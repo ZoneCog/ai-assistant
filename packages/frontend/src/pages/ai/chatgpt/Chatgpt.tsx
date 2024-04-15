@@ -20,6 +20,9 @@ import {
 import styles from './chatgpt.less'
 import PromptCustom from './components/PromptCustom'
 import PromptWeek from './components/PromptWeek'
+import { getStableTitle } from './chat.util'
+import { FileTextOutlined } from '@ant-design/icons'
+import ModelDropdown from './components/ModelDropdown'
 
 type RequestOption = {
   msg: string
@@ -36,7 +39,9 @@ export default function IndexPage() {
     setResultDataBySessionId,
     setResultBySessionId,
     storageData,
-    getConvasitionBySessionId
+    getConvasitionBySessionId,
+    setOpenSetting,
+    setModeType
   } = useContext(ChatContext)
 
   const result = active?.data || []
@@ -78,13 +83,16 @@ export default function IndexPage() {
   async function getConstantMsg(meta: RequestOption, sessionId: string) {
     const settings = getSettingData() as ILocalSettings
     const convasition = getConvasitionBySessionId(sessionId)
+    const modelInfo = settings.models.find((m) => m.id === convasition?.modelId)
     const source = new EventSource(
       `/q/sendMsg/sse?${qs.stringify({
-        apiKey: settings?.apiKey,
-        temperature: settings?.temperature,
-        top_p: settings?.top_p,
-        model: settings?.model,
+        baseUrl: modelInfo?.baseUrl,
+        apiKey: modelInfo?.apiKey,
+        temperature: modelInfo?.temperature,
+        top_p: modelInfo?.top_p,
+        model: modelInfo?.model,
         ownerId,
+        sessionId: convasition?.sessionId || '',
         parentMessageId: convasition?.parentMessageId || '',
         conversationId: convasition?.conversationId ?? undefined,
         ...meta
@@ -194,6 +202,21 @@ export default function IndexPage() {
 
   // 点击“发送”按钮发送消息事件
   function sendMsg(sessionId: string, msg?: string) {
+    const settings = getSettingData() as ILocalSettings
+    const convasition = getConvasitionBySessionId(sessionId)
+    if (!convasition) {
+      _message.error('会话不存在！')
+      return
+    }
+    if (!convasition.modelId) {
+      _message.warning('请先选择模型！')
+      return
+    }
+    const modelInfo = settings.models.find((m) => m.id === convasition.modelId)
+    if (!modelInfo) {
+      _message.error('模型已删除或不存在！')
+      return
+    }
     if (lastInputValue.current || msg) {
       // 存入数据及loading数据
       const datas = [
@@ -255,29 +278,6 @@ export default function IndexPage() {
   }
 
   /**
-   * 动态输入提示词
-   * @param value
-   * @returns
-   */
-  function setFlowValue(value: string) {
-    return new Promise<void>((resolve, reject) => {
-      function flow(str: string, val: string) {
-        if (str === val) {
-          resolve()
-          return
-        }
-        setTimeout(() => {
-          const next = val.slice(0, str.length + 2)
-          setInputValue(next)
-          flow(next, val)
-        }, 10)
-        setInputValue(str)
-      }
-      flow(value.slice(0, 2), value)
-    })
-  }
-
-  /**
    * 快捷方式通用回调
    * @param prompt
    */
@@ -301,12 +301,26 @@ export default function IndexPage() {
     sendMsg(active?.sessionId as string, latestQuestion)
   }
 
+  async function sayHello() {
+    setInputValue('你好')
+    sendMsg(active?.sessionId as string, '你好')
+  }
+
   function addEvent() {
     document.addEventListener('keydown', handleKeyDown)
   }
 
   function removeEvent() {
     document.removeEventListener('keydown', handleKeyDown)
+  }
+
+  function onCreateModel() {
+    setModeType('createModel')
+    setOpenSetting(true)
+  }
+
+  function onChangeModel(id: string) {
+    setResultBySessionId({ modelId: id }, active?.sessionId as string)
   }
 
   useEffect(() => {
@@ -340,6 +354,16 @@ export default function IndexPage() {
 
   return (
     <div className={styles.container}>
+      <div className='self-stretch flex items-center'>
+        <Tag icon={<FileTextOutlined />} color='#55acee'>
+          {getStableTitle(active) || '请添加会话'}
+        </Tag>
+        <ModelDropdown
+          modelId={active?.modelId}
+          onCreateModel={onCreateModel}
+          OnChangeModel={onChangeModel}
+        />
+      </div>
       <div className={clsx([styles.card])}>
         <AnswerLayout data={result} inputing={isInput} isLoading={isLoading} />
       </div>
@@ -364,6 +388,13 @@ export default function IndexPage() {
           onClick={openDrawer('week')}
         >
           写周报
+        </Tag>
+        <Tag
+          className='cursor-pointer hover:font-medium hover:italic'
+          color='orange'
+          onClick={sayHello}
+        >
+          打个招呼
         </Tag>
       </div>
       <div className={styles.questionWrapper}>

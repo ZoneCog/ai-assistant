@@ -1,4 +1,5 @@
 import http from 'http'
+import crypto from 'crypto'
 
 export type Role = 'user' | 'assistant' | 'system'
 
@@ -183,4 +184,12 @@ export function sendChatGptData({
   } as ICreateChatCompletionResponse | ICreateChatCompletionDeltaResponse
 
   return tojson ? result : JSON.stringify(result)
+}
+
+export function hashString(str: string | Object) {
+  str = typeof str === 'object' ? JSON.stringify(str) : str
+
+  let hash = crypto.createHash('md5')
+  hash.update(str as string)
+  return hash.digest('hex')
 }

@@ -3,8 +3,10 @@ import debugLibrary from 'debug'
 import proxy from 'https-proxy-agent'
 import { isNil } from 'lodash-es'
 import fetch from 'node-fetch'
+import { getStore } from '../utils/store.mjs'
 
 import { ISSEQuery } from '../controller/message.mjs'
+import { hashString } from '../utils/util.mjs'
 
 const debug = debugLibrary('service:thirdparty')
 const chatgptApiMap = new Map<string, ChatGPTAPI | ChatGPTUnofficialProxyAPI>()
@@ -27,39 +29,43 @@ export async function responseChatgpt(
     baseUrl,
     apiKey,
     temperature,
-    top_p
+    top_p,
+    sessionId
   } = query
-  if (!chatgptApiMap.get(ownerId)) {
-    const chatOption = {
-      apiBaseUrl:
-        baseUrl || process.env.OPENAI_API_BASE_URL || 'https://api.openai.com',
-      apiKey: apiKey || process.env.OPENAI_API_KEY,
-      completionParams: {
-        model: model || 'gpt-3.5-turbo',
-        temperature: isNil(temperature) ? 0.8 : +temperature,
-        top_p: isNil(top_p) ? 1 : +top_p
-      },
-      // @ts-ignore
-      fetch: process.env.CUSTOM_PROXY
-        ? (url, options = {}) => {
-            const defaultOptions = {
-              agent: proxy(process.env.CUSTOM_PROXY)
-            }
-            const mergedOptions = {
-              ...defaultOptions,
-              ...options
-            }
-            // @ts-ignore
-            return fetch(url, mergedOptions)
+  let chatOption = {
+    apiBaseUrl:
+      baseUrl || process.env.OPENAI_API_BASE_URL || 'https://api.openai.com',
+    apiKey: apiKey || process.env.OPENAI_API_KEY,
+    completionParams: {
+      model: model || 'gpt-3.5-turbo',
+      temperature: isNil(temperature) ? 0.8 : +temperature,
+      top_p: isNil(top_p) ? 1 : +top_p
+    },
+    fetch: process.env.CUSTOM_PROXY
+      ? (url, options = {}) => {
+          const defaultOptions = {
+            agent: proxy(process.env.CUSTOM_PROXY)
           }
-        : undefined
-    }
-    debug('...chatOption: %o', chatOption)
+          const mergedOptions = {
+            ...defaultOptions,
+            ...options
+          }
+          // @ts-ignore
+          return fetch(url, mergedOptions)
+        }
+      : undefined,
+    messageStore: getStore(sessionId)
+  }
+  debug('...chatOption: %o', chatOption)
+
+  const { fetch, messageStore, ...modelHash } = chatOption
+  const modelHashKey = hashString(modelHash)
+  if (!chatgptApiMap.get(modelHashKey)) {
     // @ts-ignore
     const api = new ChatGPTAPI(chatOption)
-    chatgptApiMap.set(ownerId, api)
+    chatgptApiMap.set(modelHashKey, api)
   }
-  const api = chatgptApiMap.get(ownerId)
+  const api = chatgptApiMap.get(modelHashKey)
   try {
     debug('...input messages: %o', msg)
     // @ts-ignore

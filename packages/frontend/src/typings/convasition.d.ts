@@ -8,4 +8,5 @@ interface IConvasition {
   conversationId?: string
   isLoading: boolean
   isInput: boolean
+  modelId?: string
 }

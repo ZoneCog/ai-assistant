@@ -1,24 +1,55 @@
-import { SettingOutlined, UserOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
+import { EditOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons'
+import { Button, MenuProps } from 'antd'
 import clsx from 'clsx'
-import { findLast } from 'lodash-es'
 import { SyntheticEvent } from 'react'
 
 import { ChatContext } from './LayoutIndex'
 import AccountModal from './components/AccountModal'
-import SettingModal from './components/SettingModal'
 import styles from './layoutSider.less'
+import { getTitle } from './chat.util'
+import { CHATGPT } from '@/services/chatgpt'
+
+interface IOperateMenu {
+  items: MenuProps['items']
+  onClick: MenuProps['onClick']
+}
 
 export default function LayoutSider() {
-  const { result, addResult, deleteResult, toggleActive, getActiveResult } =
-    useContext(ChatContext)
+  const {
+    result,
+    addResult,
+    deleteResult,
+    toggleActive,
+    getActiveResult,
+    setOpenSetting,
+    setModeType
+  } = useContext(ChatContext)
   const [openAccount, setOpenAccount] = useState(false)
-  const [openSetting, setOpenSetting] = useState(false)
+
+  const operateMenu: IOperateMenu = {
+    items: [
+      {
+        label: '添加模型',
+        key: 'createModel',
+        icon: <PlusOutlined />
+      },
+      {
+        label: '编辑模型',
+        key: 'editModel',
+        icon: <EditOutlined />
+      }
+    ],
+    onClick: ({ key }) => {
+      setModeType(key as 'createModel' | 'editModel')
+      setOpenSetting(true)
+    }
+  }
 
   function deleteItem(item: IConvasition) {
     return (e: SyntheticEvent) => {
       e.stopPropagation()
       deleteResult(item.sessionId)
+      CHATGPT.deleleStore(item.sessionId)
     }
   }
 
@@ -47,18 +78,6 @@ export default function LayoutSider() {
     }
   }
 
-  function getTitle(item: IConvasition) {
-    if (item.isLoading) {
-      return '查询中...'
-    } else if (item.isInput) {
-      return '输入中...'
-    } else {
-      return (
-        findLast(item.data, (d) => d.type === 'question')?.content || item.title
-      )
-    }
-  }
-
   return (
     <>
       <div className={styles.layoutAiSlider}>
@@ -83,11 +102,7 @@ export default function LayoutSider() {
                   >
                     <div className='i-ep-chat-line-square mr-8px'></div>
                     <div className={styles.liTitle}>{getTitle(item)}</div>
-                    {/* <div className={styles.liBtns}>
-                    <button type='button' onClick={deleteItem(item)}>
-                      删除
-                    </button>
-                  </div> */}
+
                     <div
                       className='i-mingcute-delete-2-line cursor-pointer'
                       onClick={deleteItem(item)}
@@ -98,32 +113,23 @@ export default function LayoutSider() {
           </ul>
         </div>
         <div className={styles.bottomDiv}>
-          <Button
-            type='default'
-            shape='default'
-            icon={<SettingOutlined />}
-            size='middle'
-            flex-1=''
-            style={{
-              marginBottom: '0px'
-            }}
-            onClick={() => setOpenSetting(true)}
-          >
-            设置
-          </Button>
-          {/* <Button
-            type='default'
-            shape='default'
-            icon={<UserOutlined />}
-            size='middle'
-            onClick={() => setOpenAccount(true)}
-          >
-            账户
-          </Button> */}
+          <Dropdown menu={operateMenu} placement='top' arrow>
+            <Button
+              type='default'
+              shape='default'
+              icon={<SettingOutlined />}
+              size='middle'
+              flex-1=''
+              style={{
+                marginBottom: '0px'
+              }}
+            >
+              设置
+            </Button>
+          </Dropdown>
         </div>
       </div>
       <AccountModal open={openAccount} setOpen={setOpenAccount}></AccountModal>
-      <SettingModal open={openSetting} setOpen={setOpenSetting}></SettingModal>
     </>
   )
 }

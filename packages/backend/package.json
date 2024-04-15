@@ -38,6 +38,7 @@
     "debug": "^4.1.1",
     "dotenv": "^16.0.3",
     "https-proxy-agent": "^5.0.1",
+    "keyv": "^4.5.4",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-convert": "^1.2.0",
@@ -55,6 +56,7 @@
     "openai-authenticator": "^0.0.3",
     "pug": "^2.0.3",
     "qs": "^6.11.1",
+    "quick-lru": "^7.0.0",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {

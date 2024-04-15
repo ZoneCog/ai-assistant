@@ -1,5 +1,5 @@
 import { ENABLE_REQUEST_STREAM } from '@/constants/request'
-import { post } from '@/utils/request'
+import { post, del } from '@/utils/request'
 import { ChatMessage } from 'chatgpt'
 
 export interface MsgData {
@@ -15,6 +15,11 @@ export const CHATGPT = {
       getResponse: true
     })
     console.log('chatgpt - /q/sendMsg:', res)
+    return res
+  },
+  deleleStore: async (id: string): Promise<Common.Response<any>> => {
+    const res = await del<any>(`/q/del/${id}`)
+    console.log('chatgpt - /q/del:', res)
     return res
   }
 }

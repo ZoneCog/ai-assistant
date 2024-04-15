@@ -7,12 +7,12 @@ import {
   transformerAttributifyJsx
 } from 'unocss'
 
-export function createConfig({ dev = true } = {}) {
+export function createConfig({ dev = true, strict = true } = {}) {
   return defineConfig({
     envMode: dev ? 'dev' : 'build',
     presets: [
       presetUno(),
-      presetAttributify(),
+      presetAttributify({ strict }),
       presetIcons({
         prefix: 'i-',
         extraProperties: {

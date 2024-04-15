@@ -6,13 +6,18 @@ import {
 
 import { convasitionDB } from './indexdb'
 
-export type ILocalSettings = {
+export type IModelInfo = {
+  id: string
   baseUrl: string
   apiKey: string
+  modelType: string
   model: string
   temperature: number
   top_p: number
-  enable_markdown?: boolean
+}
+
+export type ILocalSettings = {
+  models: Array<IModelInfo>
 }
 
 export type IWeekReport = {
