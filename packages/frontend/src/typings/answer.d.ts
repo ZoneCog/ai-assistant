@@ -8,6 +8,9 @@ declare namespace Answer {
         id: string
         conversationId?: string
         error: boolean
+        model: string
+        modelType: string
+        modelUrl: string
       }
     | {
         type: 'question'

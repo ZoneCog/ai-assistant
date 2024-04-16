@@ -1,6 +1,6 @@
 import WaveLoading from '@/components/loading/WaveLoading'
 import copyToClipboard from '@/utils/copy'
-import { ILocalSettings, getSettingData } from '@/utils/store'
+import { getSettingData } from '@/utils/store'
 import rehypePrism from '@mapbox/rehype-prism'
 import { message } from 'antd'
 import clsx from 'clsx'
@@ -17,6 +17,7 @@ import remarkGfm from 'remark-gfm'
 
 import styles from './answerLayout.less'
 import './markdown.less'
+import { getChatAIType } from '@/pages/ai/chatgpt/chat.util'
 
 type AnswerLayoutProps = {
   data: Answer.answer[]
@@ -178,14 +179,49 @@ export default function AnswerLayout(props: AnswerLayoutProps) {
                 )}
               >
                 <span
-                  className={clsx(styles.logo, {
-                    rotate: props.data.length - 1 === index && props.inputing
-                  })}
+                  className={clsx(
+                    styles.logo,
+                    {
+                      rotate: props.data.length - 1 === index && props.inputing
+                    },
+                    {
+                      'i-logos-openai-icon':
+                        item.type === 'answer' && item.modelType === 'chatgpt',
+                      'i-ion-logo-google':
+                        item.type === 'answer' && item.modelType === 'gemini',
+                      'i-material-symbols-robot-2-outline':
+                        item.type === 'answer' &&
+                        !['chatgpt', 'gemini'].includes(item.modelType)
+                    }
+                  )}
                 >
                   {item.type === 'question' && <span>我</span>}
                 </span>
                 <div className={styles.content}>
                   {generateContentWrap(item, index)}
+                  {item.type === 'answer' &&
+                    (props.data.length - 1 !== index ||
+                      (props.data.length - 1 === index && !props.inputing)) && (
+                      <div className='flex items-center mt-20px'>
+                        <Tag color={getChatAIType(item.model)}>
+                          {item.model}
+                        </Tag>
+                        <div className='w-fit flex items-center border-1px border-solid border-gray-300 px-4px py-2px rounded-4px bg-gray-200 hover:bg-gray-300'>
+                          {item.modelType === 'chatgpt' && (
+                            <span className='i-logos-openai-icon mr-4px'></span>
+                          )}
+                          {item.modelType === 'gemini' && (
+                            <span className='i-ion-logo-google mr-4px'></span>
+                          )}
+                          {!['chatgpt', 'gemini'].includes(item.modelType) && (
+                            <span className='i-material-symbols-robot-2-outline mr-4px'></span>
+                          )}
+                          <span className='text-12px text-gray-500 mr-8px'>
+                            {item.modelUrl}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                 </div>
               </div>
             </li>

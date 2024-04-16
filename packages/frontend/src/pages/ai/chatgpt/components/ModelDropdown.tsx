@@ -1,7 +1,9 @@
 import { ILocalSettings, IModelInfo, getSettingData } from '@/utils/store'
 import { PlusOutlined } from '@ant-design/icons'
 import { MenuProps } from 'antd'
+import clsx from 'clsx'
 import { forEach, groupBy } from 'lodash-es'
+import { getChatAIType } from '../chat.util'
 
 type IModelDropdownProps = {
   modelId?: string
@@ -29,15 +31,34 @@ export default function ModelDropdown(props: IModelDropdownProps) {
 
   forEach(models, (v, k) => {
     items.push({
-      label: <span>{k}</span>,
+      label: (
+        <div className='flex items-center'>
+          {k === 'chatgpt' ? (
+            <div className='i-logos-openai-icon?mask w-12px h-12px mr-4px text-gray-500'></div>
+          ) : (
+            <div className='i-ion-logo-google w-12px h-12px mr-7px'></div>
+          )}
+          <span>{k}</span>
+        </div>
+      ),
       key: k,
       type: 'group',
       children: v.map((m) => {
         return {
           label: (
-            <div>
-              <span className='text-16px mr-4px'>{m.model}</span>
-              <span className='text-12px text-gray-500'>{m.baseUrl}</span>
+            <div className='flex items-center'>
+              <Tag color={getChatAIType(m.model)} bordered={false}>
+                {m.model}
+              </Tag>
+              <span
+                className={clsx(
+                  m.id === props.modelId ? 'text-[#2db7f5] font-semibold' : '',
+                  'text-16px mr-4px'
+                )}
+              >
+                {m.baseUrl}
+              </span>
+              {/* <span className='text-12px text-gray-500'>{m.model}</span> */}
             </div>
           ),
           key: m.id!,
@@ -94,17 +115,30 @@ export default function ModelDropdown(props: IModelDropdownProps) {
     )
   }
 
+  function IconPrefix() {
+    switch (modelInfo?.modelType) {
+      case 'chatgpt':
+        return (
+          <div className='i-logos-openai-icon?mask w-12px h-12px mr-7px text-white'></div>
+        )
+      case 'gemini':
+        return <div className='i-ion-logo-google w-12px h-12px mr-7px'></div>
+      default:
+        return (
+          <div className='i-material-symbols-robot-2-outline w-12px h-12px mr-7px'></div>
+        )
+    }
+  }
+
   return (
     <Dropdown menu={menu} trigger={['click']}>
       <Tooltip title={modelInfo ? TipModel : ''} placement='right'>
         <Tag
           className='flex-inline items-center cursor-pointer'
-          icon={
-            <div className='i-material-symbols-robot-2-outline w-12px h-12px mr-7px'></div>
-          }
+          icon={<IconPrefix></IconPrefix>}
           color='#2db7f5'
         >
-          {modelInfo ? <span>{modelInfo.model}</span> : '请选择模型'}
+          {modelInfo ? <span>{modelInfo.baseUrl}</span> : '请选择模型'}
         </Tag>
       </Tooltip>
     </Dropdown>

@@ -22,3 +22,18 @@ export function getStableTitle(item: IConvasition | null) {
     )
   }
 }
+
+export function getChatAIType(type: string) {
+  switch (type) {
+    case 'gpt-3.5-turbo':
+      return 'blue'
+    case 'gpt-4':
+      return 'green'
+    case 'gemini-1.0':
+      return 'gold'
+    case 'gemini-1.5':
+      return 'orange'
+    default:
+      return 'gray'
+  }
+}

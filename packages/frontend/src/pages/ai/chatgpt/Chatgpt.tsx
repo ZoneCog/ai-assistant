@@ -125,7 +125,10 @@ export default function IndexPage() {
             content: result.text,
             id: result.id,
             conversationId: result.conversationId,
-            error: result.error
+            error: result.error,
+            model: modelInfo?.model || '',
+            modelType: modelInfo?.modelType || '',
+            modelUrl: modelInfo?.baseUrl || ''
           }
           newData.push(newAnswer)
           // 存储回复,并存储parentMessageId, isInput, isLoading
@@ -157,7 +160,10 @@ export default function IndexPage() {
                 content: result.text,
                 id: result.id,
                 conversationId: result.conversationId,
-                error: result.error
+                error: result.error,
+                model: modelInfo?.model || '',
+                modelType: modelInfo?.modelType || '',
+                modelUrl: modelInfo?.baseUrl || ''
               }
             ]
             // 存储回复,并存储parentMessageId, isInput, isLoading
@@ -355,9 +361,6 @@ export default function IndexPage() {
   return (
     <div className={styles.container}>
       <div className='self-stretch flex items-center'>
-        <Tag icon={<FileTextOutlined />} color='#55acee'>
-          {getStableTitle(active) || '请添加会话'}
-        </Tag>
         <ModelDropdown
           modelId={active?.modelId}
           onCreateModel={onCreateModel}
