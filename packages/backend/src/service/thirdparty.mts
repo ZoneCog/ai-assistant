@@ -2,14 +2,14 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI, ChatMessage } from 'chatgpt'
 import debugLibrary from 'debug'
 import proxy from 'https-proxy-agent'
 import { isNil } from 'lodash-es'
-import fetch from 'node-fetch'
+import fetchApi from 'node-fetch'
 import { getStore } from '../utils/store.mjs'
 
 import { ISSEQuery } from '../controller/message.mjs'
 import { hashString } from '../utils/util.mjs'
 
 const debug = debugLibrary('service:thirdparty')
-const chatgptApiMap = new Map<string, ChatGPTAPI | ChatGPTUnofficialProxyAPI>()
+const chatgptApiMap = new Map<string, ChatGPTAPI>()
 
 const getRestOptions = ({ parentMessageId }: { parentMessageId: string }) => {
   return {
@@ -51,7 +51,7 @@ export async function responseChatgpt(
             ...options
           }
           // @ts-ignore
-          return fetch(url, mergedOptions)
+          return fetchApi(url, mergedOptions)
         }
       : undefined,
     messageStore: getStore(sessionId)
@@ -59,13 +59,17 @@ export async function responseChatgpt(
   debug('...chatOption: %o', chatOption)
 
   const { fetch, messageStore, ...modelHash } = chatOption
+  // const { fetch, ...modelHash } = chatOption
   const modelHashKey = hashString(modelHash)
+  let api: ChatGPTAPI | null = null
   if (!chatgptApiMap.get(modelHashKey)) {
     // @ts-ignore
-    const api = new ChatGPTAPI(chatOption)
-    chatgptApiMap.set(modelHashKey, api)
+    chatgptApiMap.set(modelHashKey, new ChatGPTAPI(chatOption))
   }
-  const api = chatgptApiMap.get(modelHashKey)
+  api = chatgptApiMap.get(modelHashKey)
+  if (!api) {
+    throw new Error('api is null')
+  }
   try {
     debug('...input messages: %o', msg)
     // @ts-ignore
