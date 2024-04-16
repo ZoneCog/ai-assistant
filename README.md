@@ -6,7 +6,7 @@ This is an AI project that integrates various open source AI capabilities.
 
 ## Project Introduction
 
-![Screenshot](Screenshots/jietu2.png)
+![Screenshot](Screenshots/jietu3.png)
 
 Let everyone have the ability to use AI.
 
@@ -22,33 +22,13 @@ In root directory, copy an `.env.example` file and rename it to `.env`, then mod
 # Server Port, eg: 3000
 SERVER_PORT=3000
 
-# TIMEOUT Time,eg: 2 * 60 * 1000
-CHATGPT_REQUEST_TIMEOUT=
-
-# OpenAI API Base URL - https://api.openai.com/docs
-# Or self-built service address, eg api2d: https://openai.api2d.net/v1
-OPENAI_API_BASE_URL =
-
-# OpenAI API Key - https://platform.openai.com/account/api-keys
-# Or self-built service key, eg api2d: fkxxx
-OPENAI_API_KEY=
-
 # CUSTOM_PROXY represents an http proxy. If left blank or not passed any value,
 # it means that the http proxy is not enabled.
+# eg: http://127.0.0.1:7890
 CUSTOM_PROXY=
-
 ```
 
-- `OPENAI_API_BASE_URL`: Indicates the base URL used for chatgpt, which can also use a third-party self-built service address, such as the `endpoint` of [api2d](https://api2d.com/). The default value here is `https://api.openai.com/v1`.
-- `OPENAI_API_KEY`: Represents the official OpenAI [API key](https://platform.openai.com/account/api-keys) that will be used. Alternatively, you can use a third-party service key, such as [api2d](https://api2d.com/).
-- ~~`PROXY_ADDRESS`: Scientific Internet access proxy configuration, for example: http://xxx.~~
-- ~~`OPENAI_ACCESS_TOKEN`: OpenAI's [access_token](https://chat.openai.com/api/auth/session), The field usually use with `API_REVERSE_PROXY`，Indicates that unofficial APIs will be used to access chatgpt.~~
-- ~~`API_REVERSE_PROXY`: Indicates available unofficial reverse proxies. By default it adopts "https://ai.fakeopen.com/api/conversation". For details please refer [transitive-bullshit 大佬](https://github.com/transitive-bullshit/chatgpt-api/tree/main#reverse-proxy).~~
-- ~~`CUSTOM_API_URL`: Indicates the third party support service url.~~
-- ~~`CUSTOM_COOKIE`: Indicates the third party may need `cookie` info.~~
 - `CUSTOM_PROXY`: represents an http proxy. If left blank or not passed any value, it means that the http proxy is not enabled.
-
-> ~~Priority: `OPENAI_API_KEY` > `OPENAI_ACCESS_TOKEN` > `CUSTOM_API_URL`。~~
 
 ## How to Develop?
 

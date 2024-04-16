@@ -33,11 +33,10 @@ export async function responseChatgpt(
     sessionId
   } = query
   let chatOption = {
-    apiBaseUrl:
-      baseUrl || process.env.OPENAI_API_BASE_URL || 'https://api.openai.com',
-    apiKey: apiKey || process.env.OPENAI_API_KEY,
+    apiBaseUrl: baseUrl,
+    apiKey: apiKey,
     completionParams: {
-      model: model || 'gpt-3.5-turbo',
+      model: model,
       temperature: isNil(temperature) ? 0.8 : +temperature,
       top_p: isNil(top_p) ? 1 : +top_p
     },
@@ -77,7 +76,7 @@ export async function responseChatgpt(
       onProgress: (partialResponse: ChatMessage) => {
         callbacks.onData?.(partialResponse)
       },
-      timeoutMs: +process.env.CHATGPT_REQUEST_TIMEOUT,
+      timeoutMs: +process.env.REQUEST_TIMEOUT,
       ...getRestOptions({
         parentMessageId
       })
