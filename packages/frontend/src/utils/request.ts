@@ -9,6 +9,7 @@ async function http<ResponseData, RequestData>(
   params?: RequestData,
   config?: any
 ) {
+  console.log('http')
   const data = await request<ResponseData>(url, {
     method,
     headers: {
@@ -30,7 +31,7 @@ function get<ResponseData, RequestData = undefined>(
   return http<ResponseData, RequestData>(url, 'GET', params, config)
 }
 
-function post<ResponseData, RequestData = undefined>(
+function post<ResponseData, RequestData = any>(
   url: string,
   data?: RequestData,
   config?: any

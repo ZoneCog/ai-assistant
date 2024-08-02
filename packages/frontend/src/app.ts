@@ -42,7 +42,7 @@ export const request: RequestConfig = {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as Common.Response<any>
       if (data.code === 200) {
-        return data.data
+        return data
       } else {
         return Promise.reject(data)
       }

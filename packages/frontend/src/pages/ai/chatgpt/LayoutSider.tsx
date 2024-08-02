@@ -113,7 +113,12 @@ export default function LayoutSider() {
           </ul>
         </div>
         <div className={styles.bottomDiv}>
-          <Dropdown menu={operateMenu} placement='top' arrow>
+          <Dropdown
+            menu={operateMenu}
+            placement='top'
+            arrow
+            trigger={['click']}
+          >
             <Button
               type='default'
               shape='default'

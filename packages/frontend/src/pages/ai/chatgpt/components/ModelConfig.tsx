@@ -24,6 +24,8 @@ interface IModelConfigProps {
 export default function ModelConfig(props: IModelConfigProps) {
   const formRef = useRef<FormInstance<IModelInfo>>(null)
   const [checkLoading, setCheckLoading] = useState(false)
+  const [billLoading, setBillLoading] = useState(false)
+  const [bill, setBill] = useState('')
   const [checkError, setCheckError] = useState('')
   const [form] = Form.useForm()
   const [modelType, setModelType] = useState(
@@ -143,6 +145,22 @@ export default function ModelConfig(props: IModelConfigProps) {
       })
   }
 
+  const queryBill = () => {
+    setBillLoading(true)
+    CHATGPT.queryApi2DBill()
+      .then((res) => {
+        console.log('queryBill', res)
+        setBill(res.point)
+      })
+      .catch((e) => {
+        console.log('queryBill error', e)
+        setBill('-')
+      })
+      .finally(() => {
+        setBillLoading(false)
+      })
+  }
+
   return (
     <Form
       className='w-full'
@@ -205,28 +223,47 @@ export default function ModelConfig(props: IModelConfigProps) {
         <Slider min={0} max={1} step={0.1} onChange={saveHandler}></Slider>
       </Form.Item>
       {props.data ? (
-        <Form.Item label='联通性检查'>
-          <div className='flex items-center'>
-            <Button
-              type='primary'
-              onClick={check}
-              loading={checkLoading}
-              disabled={checkLoading}
-            >
-              检查
-            </Button>
-            {checkError !== 'ok' ? (
-              <span
-                title={checkError}
-                className='text-red-500 custom-ellipsis inline-block w-250px ml-12px'
+        <>
+          <Form.Item label='联通性检查'>
+            <div className='flex items-center'>
+              <Button
+                type='primary'
+                onClick={check}
+                loading={checkLoading}
+                disabled={checkLoading}
               >
-                {checkError}
-              </span>
-            ) : checkError === 'ok' ? (
-              <span className='text-green-500 ml-12px'>ok!</span>
-            ) : null}
-          </div>
-        </Form.Item>
+                检查
+              </Button>
+              {checkError !== 'ok' ? (
+                <span
+                  title={checkError}
+                  className='text-red-500 custom-ellipsis inline-block w-250px ml-12px'
+                >
+                  {checkError}
+                </span>
+              ) : checkError === 'ok' ? (
+                <span className='text-green-500 ml-12px'>ok!</span>
+              ) : null}
+            </div>
+          </Form.Item>
+          <Form.Item label='查余额'>
+            <div>
+              <Button
+                type='primary'
+                onClick={queryBill}
+                loading={billLoading}
+                disabled={billLoading}
+              >
+                查询
+              </Button>
+              {bill === '-' ? (
+                <span className='text-red-500 inline-block ml-12px'> - </span>
+              ) : (
+                <span className='text-green-500 ml-12px'>{bill}</span>
+              )}
+            </div>
+          </Form.Item>
+        </>
       ) : null}
     </Form>
   )

@@ -35,5 +35,10 @@ export const CHATGPT = {
     const res = await get<ChatMessage, ICheckApiParams>('/q/checkApi', params)
     console.log('chatgpt - /q/checkApi:', res)
     return res
+  },
+  queryApi2DBill: async (): Promise<any> => {
+    const res = await post<any>('/q/userProfile/api2d')
+    console.log('chatgpt - /q/userProfile/api2d:', res)
+    return res
   }
 }
