@@ -23,7 +23,10 @@
 SERVER_PORT=3000
 
 # TIMEOUT Time,eg: 2 * 60 * 1000
-REQUEST_TIMEOUT=
+REQUEST_TIMEOUT=2 * 60 * 1000
+
+# check api request timeout, eg: 10 * 1000
+CHECK_REQUEST_TIMEOUT=10 * 1000
 
 # CUSTOM_PROXY represents an http proxy. If left blank or not passed any value,
 # it means that the http proxy is not enabled.

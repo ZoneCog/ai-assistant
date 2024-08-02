@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import Koa from 'koa'
 import { deleleStore } from '../utils/store.mjs'
 
-import { flowResponse } from '../service/stream.mjs'
+import { flowResponse, normalResponse } from '../service/stream.mjs'
 
 const debug = debugLibrary('controller:completions')
 const events = new EventEmitter()
@@ -32,6 +32,13 @@ export default class MessageController {
     debug('sendMsgSSE query params:', JSON.stringify(ctx.request.query))
 
     flowResponse(query, ctx, events)
+  }
+
+  public static async checkApi(ctx: Koa.Context) {
+    const query = ctx.request.query as unknown as ISSEQuery
+    debug('checkApi query params:', JSON.stringify(ctx.request.query))
+
+    await normalResponse(query, ctx)
   }
 
   public static async delStore(ctx: Koa.Context) {

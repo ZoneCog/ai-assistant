@@ -1,5 +1,5 @@
 import { ENABLE_REQUEST_STREAM } from '@/constants/request'
-import { post, del } from '@/utils/request'
+import { post, del, get } from '@/utils/request'
 import { ChatMessage } from 'chatgpt'
 
 export interface MsgData {
@@ -8,8 +8,17 @@ export interface MsgData {
   parentMessageId: string
 }
 
+export type ICheckApiParams = {
+  baseUrl: string
+  apiKey: string
+  temperature: string
+  top_p: string
+  model: string
+  msg: string
+}
+
 export const CHATGPT = {
-  sendMsg: async (data: MsgData): Promise<Common.Response<ChatMessage>> => {
+  sendMsg: async (data: MsgData): Promise<ChatMessage> => {
     const res = await post<ChatMessage, MsgData>('/q/sendMsg', data, {
       responseType: (ENABLE_REQUEST_STREAM ? 'stream' : 'json') as ResponseType,
       getResponse: true
@@ -17,9 +26,14 @@ export const CHATGPT = {
     console.log('chatgpt - /q/sendMsg:', res)
     return res
   },
-  deleleStore: async (id: string): Promise<Common.Response<any>> => {
+  deleleStore: async (id: string): Promise<any> => {
     const res = await del<any>(`/q/del/${id}`)
     console.log('chatgpt - /q/del:', res)
+    return res
+  },
+  checkApi: async (params: ICheckApiParams): Promise<ChatMessage> => {
+    const res = await get<ChatMessage, ICheckApiParams>('/q/checkApi', params)
+    console.log('chatgpt - /q/checkApi:', res)
     return res
   }
 }

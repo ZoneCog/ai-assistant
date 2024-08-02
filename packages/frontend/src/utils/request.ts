@@ -9,30 +9,24 @@ async function http<ResponseData, RequestData>(
   params?: RequestData,
   config?: any
 ) {
-  const data = await request<Common.Response<ResponseData>>(
-    url,
-    Object.assign(
-      {
-        method,
-        getResponse: true,
-        headers: {
-          'X-Trace-Id': uuid()
-        }
-      },
-      method === 'GET' ? { params } : { data: params },
-      config
-    )
-  )
+  const data = await request<ResponseData>(url, {
+    method,
+    headers: {
+      'X-Trace-Id': uuid()
+    },
+    ...(method === 'GET' ? { params } : { data: params }),
+    getResponse: false,
+    config
+  })
 
-  // console.log('http response data:', data);
-  return data?.data ?? {}
+  return data
 }
 
 function get<ResponseData, RequestData = undefined>(
   url: string,
   params?: RequestData,
-  config?: any
-): Promise<Common.Response<ResponseData>> {
+  config: any = {}
+): Promise<ResponseData> {
   return http<ResponseData, RequestData>(url, 'GET', params, config)
 }
 
@@ -40,13 +34,13 @@ function post<ResponseData, RequestData = undefined>(
   url: string,
   data?: RequestData,
   config?: any
-): Promise<Common.Response<ResponseData>> {
+): Promise<ResponseData> {
   return http<ResponseData, RequestData>(url, 'POST', data, config)
 }
 
 function del<ResponseData, RequestData = undefined>(
   url: string
-): Promise<Common.Response<ResponseData>> {
+): Promise<ResponseData> {
   return http<ResponseData, RequestData>(url, 'DELETE')
 }
 

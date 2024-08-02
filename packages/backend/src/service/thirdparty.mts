@@ -11,6 +11,8 @@ import { hashString } from '../utils/util.mjs'
 const debug = debugLibrary('service:thirdparty')
 const chatgptApiMap = new Map<string, ChatGPTAPI>()
 
+export type IType = 'flow-convasition' | 'check-api'
+
 const getRestOptions = ({ parentMessageId }: { parentMessageId: string }) => {
   return {
     parentMessageId
@@ -19,7 +21,8 @@ const getRestOptions = ({ parentMessageId }: { parentMessageId: string }) => {
 
 export async function responseChatgpt(
   query: ISSEQuery,
-  callbacks: IResponseChatGptCallbacks = {}
+  callbacks: IResponseChatGptCallbacks = {},
+  type: IType = 'flow-convasition'
 ) {
   const {
     msg,
@@ -53,7 +56,9 @@ export async function responseChatgpt(
           return fetchApi(url, mergedOptions)
         }
       : undefined,
-    messageStore: getStore(sessionId)
+    ...(type === 'flow-convasition'
+      ? { messageStore: getStore(sessionId) }
+      : {})
   }
   debug('...chatOption: %o', chatOption)
 
@@ -61,11 +66,16 @@ export async function responseChatgpt(
   // const { fetch, ...modelHash } = chatOption
   const modelHashKey = hashString(modelHash)
   let api: ChatGPTAPI | null = null
-  if (!chatgptApiMap.get(modelHashKey)) {
+  if (!chatgptApiMap.get(modelHashKey) && type === 'flow-convasition') {
     // @ts-ignore
     chatgptApiMap.set(modelHashKey, new ChatGPTAPI(chatOption))
   }
-  api = chatgptApiMap.get(modelHashKey)
+  if (type === 'flow-convasition') {
+    api = chatgptApiMap.get(modelHashKey)
+  } else if (type === 'check-api') {
+    // @ts-ignore
+    api = new ChatGPTAPI(chatOption)
+  }
   if (!api) {
     throw new Error('api is null')
   }
@@ -73,16 +83,25 @@ export async function responseChatgpt(
     debug('...input messages: %o', msg)
     // @ts-ignore
     const result = await api.sendMessage(msg, {
-      onProgress: (partialResponse: ChatMessage) => {
-        callbacks.onData?.(partialResponse)
-      },
-      timeoutMs: +process.env.REQUEST_TIMEOUT,
+      ...(type === 'flow-convasition'
+        ? {
+            onProgress: (partialResponse: ChatMessage) => {
+              callbacks.onData?.(partialResponse)
+            }
+          }
+        : {}),
+      timeoutMs:
+        type === 'flow-convasition'
+          ? +process.env.REQUEST_TIMEOUT
+          : +process.env.CHECK_REQUEST_TIMEOUT,
       ...getRestOptions({
         parentMessageId
       })
     })
     callbacks.onEnd?.(result)
+    return Promise.resolve(result)
   } catch (e) {
     callbacks.onError?.(e)
+    return Promise.reject(e)
   }
 }

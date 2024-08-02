@@ -4,6 +4,7 @@ import {
   DEFAULT_MODEL_TYPE,
   OPTIONIAL_MODEL
 } from '@/constants/constant'
+import { CHATGPT } from '@/services/chatgpt'
 import {
   ILocalSettings,
   IModelInfo,
@@ -12,7 +13,7 @@ import {
 } from '@/utils/store'
 import { randomString } from '@/utils/tools'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { FormInstance } from 'antd'
+import { FormInstance, message } from 'antd'
 import { debounce } from 'lodash-es'
 
 interface IModelConfigProps {
@@ -22,6 +23,8 @@ interface IModelConfigProps {
 
 export default function ModelConfig(props: IModelConfigProps) {
   const formRef = useRef<FormInstance<IModelInfo>>(null)
+  const [checkLoading, setCheckLoading] = useState(false)
+  const [checkError, setCheckError] = useState('')
   const [form] = Form.useForm()
   const [modelType, setModelType] = useState(
     props.data?.modelType || DEFAULT_MODEL_TYPE
@@ -114,7 +117,31 @@ export default function ModelConfig(props: IModelConfigProps) {
     saveHandler()
   }
 
-  const check = () => {}
+  const check = () => {
+    const { baseUrl, apiKey, model, temperature, top_p } = form.getFieldsValue()
+    console.log('check', baseUrl, apiKey, model, temperature, top_p)
+    setCheckLoading(true)
+    CHATGPT.checkApi({
+      baseUrl,
+      apiKey,
+      model,
+      temperature,
+      top_p,
+      msg: 'hello'
+    })
+      .then((res) => {
+        message.success('检查成功')
+        setCheckError('ok')
+      })
+      .catch((e) => {
+        console.log('check error', e)
+        message.error(`检查失败: ${e.msg}`)
+        setCheckError(e.msg || 'error')
+      })
+      .finally(() => {
+        setCheckLoading(false)
+      })
+  }
 
   return (
     <Form
@@ -179,9 +206,26 @@ export default function ModelConfig(props: IModelConfigProps) {
       </Form.Item>
       {props.data ? (
         <Form.Item label='联通性检查'>
-          <Button type='primary' onClick={check}>
-            检查
-          </Button>
+          <div className='flex items-center'>
+            <Button
+              type='primary'
+              onClick={check}
+              loading={checkLoading}
+              disabled={checkLoading}
+            >
+              检查
+            </Button>
+            {checkError !== 'ok' ? (
+              <span
+                title={checkError}
+                className='text-red-500 custom-ellipsis inline-block w-250px ml-12px'
+              >
+                {checkError}
+              </span>
+            ) : checkError === 'ok' ? (
+              <span className='text-green-500 ml-12px'>ok!</span>
+            ) : null}
+          </div>
         </Form.Item>
       ) : null}
     </Form>

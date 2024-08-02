@@ -84,3 +84,26 @@ export async function flowResponse(
     }
   })
 }
+
+export async function normalResponse(query: ISSEQuery, ctx: Context) {
+  try {
+    const data = await responseChatgpt(query, {}, 'check-api')
+    debug(`[normalResponse response]: `, logText(data.text ?? ''))
+    ctx.status = 200
+    ctx.body = {
+      code: 200,
+      msg: 'ok',
+      data: data,
+      success: true
+    }
+  } catch (e) {
+    debug('[normalResponse response]: request error', e)
+    ctx.status = 200
+    ctx.body = {
+      code: 500,
+      msg: e.message || 'error',
+      data: null,
+      success: false
+    }
+  }
+}

@@ -22,7 +22,17 @@ export function createConfig({ dev = true, strict = true } = {}) {
       }),
       presetTypography()
     ],
-    transformers: [transformerAttributifyJsx()]
+    transformers: [transformerAttributifyJsx()],
+    rules: [
+      [
+        'custom-ellipsis',
+        {
+          overflow: 'hidden',
+          'text-overflow': 'ellipsis',
+          'white-space': 'nowrap'
+        }
+      ]
+    ]
   })
 }
 
