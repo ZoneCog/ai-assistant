@@ -7,14 +7,17 @@ const debug = debugLibrary('vendor')
 
 export async function api2DProfile(ctx: Context) {
   try {
-    const res = await fetch(`https://api.api2d.com/user/profile`, {
-      method: 'POST',
-      headers: {
-        authorization: 'Bearer 100037|WOdHl3svgUPJdKIMkqlbSZbl7YjOXxHqTEVVtyFa',
-        Accept: 'application/json'
-      },
-      agent: proxy(process.env.CUSTOM_PROXY)
-    })
+    const res = await fetch(
+      `${process.env.VENDOR_api2d_net_url}${process.env.VENDOR_api2d_net_userProfileUrl}`,
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${process.env.VENDOR_api2d_net_apiToken}`,
+          Accept: 'application/json'
+        },
+        agent: proxy(process.env.CUSTOM_PROXY)
+      }
+    )
     const data: any = await res.json()
     debug('api2DProfile result: ', data)
     if (data.code === 0) {

@@ -26,7 +26,7 @@ export default function AddModel(props: AddModelProps) {
     }
   })
 
-  const defaultActiveKey = [models[0].id]
+  const defaultActiveKey = models.length ? [models[0].id] : []
 
   function createModel() {
     props.onCreateModel('createModel')

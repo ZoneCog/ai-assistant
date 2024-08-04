@@ -27,6 +27,7 @@ export default function ModelConfig(props: IModelConfigProps) {
   const [billLoading, setBillLoading] = useState(false)
   const [bill, setBill] = useState('')
   const [checkError, setCheckError] = useState('')
+  const [billError, setBillError] = useState('')
   const [form] = Form.useForm()
   const [modelType, setModelType] = useState(
     props.data?.modelType || DEFAULT_MODEL_TYPE
@@ -151,10 +152,11 @@ export default function ModelConfig(props: IModelConfigProps) {
       .then((res) => {
         console.log('queryBill', res)
         setBill(res.point)
+        setBillError('')
       })
       .catch((e) => {
         console.log('queryBill error', e)
-        setBill('-')
+        setBillError(e.msg || 'error')
       })
       .finally(() => {
         setBillLoading(false)
@@ -256,8 +258,11 @@ export default function ModelConfig(props: IModelConfigProps) {
               >
                 查询
               </Button>
-              {bill === '-' ? (
-                <span className='text-red-500 inline-block ml-12px'> - </span>
+              {billError ? (
+                <span className='text-red-500 inline-block ml-12px'>
+                  {' '}
+                  {billError}{' '}
+                </span>
               ) : (
                 <span className='text-green-500 ml-12px'>{bill}</span>
               )}

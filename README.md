@@ -22,6 +22,23 @@ In root directory, copy an `.env.example` file and rename it to `.env`, then mod
 # Server Port, eg: 3000
 SERVER_PORT=3000
 
+# TIMEOUT Time,eg: 2 * 60 * 1000
+REQUEST_TIMEOUT=2 * 60 * 1000
+
+# check api request timeout, eg: 10 * 1000
+CHECK_REQUEST_TIMEOUT=10 * 1000
+
+# ==== vendor config start ===
+
+# api2d station url
+VENDOR_api2d_net_url=https://api.api2d.com
+# api2d station user profile url
+VENDOR_api2d_net_userProfileUrl=/user/profile
+# api2d api token, detial in https://api2d.com/wiki/siteapi
+VENDOR_api2d_net_apiToken=xxx
+
+# ==== vendor config end ===
+
 # CUSTOM_PROXY represents an http proxy. If left blank or not passed any value,
 # it means that the http proxy is not enabled.
 # eg: http://127.0.0.1:7890
@@ -29,6 +46,13 @@ CUSTOM_PROXY=
 ```
 
 - `CUSTOM_PROXY`: represents an http proxy. If left blank or not passed any value, it means that the http proxy is not enabled.
+- `SERVER_PORT`: server port, eg: 3000
+- `REQUEST_TIMEOUT`: flow request timeout, eg: 2 * 60 * 1000
+- `CHECK_REQUEST_TIMEOUT`: normal response api request timeout, eg: 10 * 1000
+- `VENDOR_api2d_net_url`: api2d station url, eg: https://api.api2d.com
+- `VENDOR_api2d_net_userProfileUrl`: api2d station user profile url, eg: /user/profile
+- `VENDOR_api2d_net_apiToken`: api2d api token, detial in https://api2d.com/wiki/siteapi
+
 
 ## How to Develop?
 
