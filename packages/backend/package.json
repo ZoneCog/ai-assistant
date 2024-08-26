@@ -54,7 +54,7 @@
     "node-fetch": "^3.3.0",
     "openai": "^3.3.0",
     "openai-authenticator": "^0.0.3",
-    "pug": "^2.0.3",
+    "pug": "^3.0.3",
     "qs": "^6.11.1",
     "quick-lru": "^7.0.0",
     "ts-node": "^10.9.1"
